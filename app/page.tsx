@@ -1,6 +1,8 @@
+import TripForm from "@/components/TripForm";
+
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
         AI Travel Planner
       </h1>
@@ -9,9 +11,9 @@ export default function Home() {
         We&apos;ll build a day-by-day plan using real places, with estimated
         costs.
       </p>
-      <p className="mt-8 text-sm text-zinc-500">
-        The trip form is coming in the next step.
-      </p>
+      <div className="mt-10">
+        <TripForm />
+      </div>
     </main>
   );
 }
