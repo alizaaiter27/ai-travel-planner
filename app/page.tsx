@@ -1,4 +1,4 @@
-import TripForm from "@/components/TripForm";
+import TripPlanner from "@/components/TripPlanner";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         costs.
       </p>
       <div className="mt-10">
-        <TripForm />
+        <TripPlanner />
       </div>
     </main>
   );
