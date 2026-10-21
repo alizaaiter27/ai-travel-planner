@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
+import { tripRequestSchema } from "@/lib/schemas/trip";
 import {
   CURRENCIES,
   INTERESTS,
@@ -32,36 +34,14 @@ const initialValues: FormValues = {
   preferences: "",
 };
 
-// Returns an error message for each invalid field (empty object = all good).
-// In Step 4 these rules move into a shared Zod schema.
-function validate(values: FormValues): FormErrors {
+// Turns Zod's error list into one message per field, e.g.
+// { budget: "Enter a total budget greater than 0." }
+function toFormErrors(error: z.ZodError<TripRequest>): FormErrors {
+  const { fieldErrors } = z.flattenError(error);
   const errors: FormErrors = {};
-
-  const destination = values.destination.trim();
-  if (destination.length < 2) {
-    errors.destination = "Enter a destination (at least 2 characters).";
-  } else if (destination.length > 100) {
-    errors.destination = "Destination must be 100 characters or fewer.";
+  for (const [field, messages] of Object.entries(fieldErrors)) {
+    if (messages?.[0]) errors[field as keyof FormValues] = messages[0];
   }
-
-  const days = Number(values.days);
-  if (!Number.isInteger(days) || days < MIN_DAYS || days > MAX_DAYS) {
-    errors.days = `Choose a whole number of days from ${MIN_DAYS} to ${MAX_DAYS}.`;
-  }
-
-  const budget = Number(values.budget);
-  if (values.budget.trim() === "" || !Number.isFinite(budget) || budget <= 0) {
-    errors.budget = "Enter a total budget greater than 0.";
-  }
-
-  if (values.interests.length === 0) {
-    errors.interests = "Pick at least one interest.";
-  }
-
-  if (values.preferences.length > MAX_PREFERENCES_LENGTH) {
-    errors.preferences = `Keep preferences under ${MAX_PREFERENCES_LENGTH} characters.`;
-  }
-
   return errors;
 }
 
@@ -97,25 +77,22 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); // stop the browser from reloading the page
-    const nextErrors = validate(values);
-    setErrors(nextErrors);
+    // safeParse never throws: it returns either { success: true, data }
+    // or { success: false, error }.
+    const result = tripRequestSchema.safeParse(values);
 
-    if (Object.keys(nextErrors).length > 0) {
+    if (!result.success) {
+      const nextErrors = toFormErrors(result.error);
+      setErrors(nextErrors);
       // Move keyboard focus to the first invalid field.
       const firstField = Object.keys(nextErrors)[0];
-      document.getElementById(firstField)?.focus();
+      if (firstField) document.getElementById(firstField)?.focus();
       return;
     }
 
-    // Values are valid: convert text to numbers and hand the request to the parent.
-    onSubmit({
-      destination: values.destination.trim(),
-      days: Number(values.days),
-      budget: Number(values.budget),
-      currency: values.currency,
-      interests: values.interests,
-      preferences: values.preferences.trim(),
-    });
+    setErrors({});
+    // result.data is already cleaned up: text trimmed, numbers converted.
+    onSubmit(result.data);
   }
 
   return (

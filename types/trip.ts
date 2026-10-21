@@ -1,39 +1,23 @@
+import type { z } from "zod";
+import type {
+  itineraryDaySchema,
+  itineraryItemSchema,
+  itinerarySchema,
+  placeCategorySchema,
+  tripRequestSchema,
+} from "@/lib/schemas/trip";
 import type { CURRENCIES, INTERESTS } from "@/lib/trip-options";
 
-// `(typeof CURRENCIES)[number]` means "any one value from the CURRENCIES list",
-// so the type stays in sync with the list automatically.
+// Types are generated from the Zod schemas with z.infer, so the
+// validation rules and the TypeScript types can never drift apart.
+
 export type Currency = (typeof CURRENCIES)[number];
 export type Interest = (typeof INTERESTS)[number];
 
-// What the form sends to the planner once it's valid.
-export type TripRequest = {
-  destination: string;
-  days: number;
-  budget: number;
-  currency: Currency;
-  interests: Interest[];
-  preferences: string;
-};
+// z.output = the shape *after* validation (e.g. days is a number, not text).
+export type TripRequest = z.output<typeof tripRequestSchema>;
 
-export type PlaceCategory = "attraction" | "restaurant";
-
-export type ItineraryItem = {
-  time: string; // "09:00"
-  placeName: string;
-  category: PlaceCategory;
-  reason: string;
-  durationMinutes: number;
-  estimatedCost: number | null; // null = no estimate available
-};
-
-export type ItineraryDay = {
-  day: number;
-  theme: string;
-  items: ItineraryItem[];
-};
-
-export type Itinerary = {
-  destination: string;
-  currency: Currency;
-  days: ItineraryDay[];
-};
+export type PlaceCategory = z.infer<typeof placeCategorySchema>;
+export type ItineraryItem = z.infer<typeof itineraryItemSchema>;
+export type ItineraryDay = z.infer<typeof itineraryDaySchema>;
+export type Itinerary = z.infer<typeof itinerarySchema>;

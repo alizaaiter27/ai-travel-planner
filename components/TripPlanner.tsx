@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ItineraryView from "@/components/ItineraryView";
 import TripForm from "@/components/TripForm";
 import { getMockItinerary } from "@/lib/mock-itinerary";
+import { itinerarySchema } from "@/lib/schemas/trip";
 import type { Itinerary, TripRequest } from "@/types/trip";
 
 type Status = "idle" | "loading" | "success";
@@ -27,7 +28,9 @@ export default function TripPlanner() {
     // Pretend to wait for the server. Later steps replace this with a real API call.
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    setItinerary(getMockItinerary(request));
+    // Check the data has the expected shape before showing it. Real API
+    // data will go through the same check; .parse() throws if it's wrong.
+    setItinerary(itinerarySchema.parse(getMockItinerary(request)));
     setStatus("success");
   }
 
