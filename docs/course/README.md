@@ -37,12 +37,12 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 05 | [Validation with Zod](05-zod-validation.md) | Shared validation rules | Schemas, `safeParse`, inferred types | `442d71a` |
 | 06 | [Google Places API key](06-google-places-key.md) | A restricted API key | API keys, billing, env variables, secrets | `d37a2ee` |
 | 07 | [Places Route Handler](07-places-route-handler.md) | `POST /api/places` | Route Handlers, server-only code, external APIs, error handling | `2dfa746` |
+| 08 | [Real places in the UI](08-real-places-ui.md) | Places list; loading, error, retry, empty states | Client `fetch`, `response.ok`, retryable errors, `useRef` | `e544196` |
 
 ### Coming next
 
 | # | Module | What you'll build |
 |---|--------|-------------------|
-| 08 | Real places in the UI | Call the API from the page; error, retry, and empty states |
 | 09 | AI itinerary with OpenAI | Structured output limited to real places |
 | 10 | Budget calculations | Daily/total estimates computed in code |
 | 11 | Interactive map | Google Maps with markers linked to the itinerary |
