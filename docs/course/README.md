@@ -38,12 +38,13 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 06 | [Google Places API key](06-google-places-key.md) | A restricted API key | API keys, billing, env variables, secrets | `d37a2ee` |
 | 07 | [Places Route Handler](07-places-route-handler.md) | `POST /api/places` | Route Handlers, server-only code, external APIs, error handling | `2dfa746` |
 | 08 | [Real places in the UI](08-real-places-ui.md) | Places list; loading, error, retry, empty states | Client `fetch`, `response.ok`, retryable errors, `useRef` | `e544196` |
+| 09 | [AI itinerary with OpenAI](09-ai-itinerary.md) | `POST /api/itinerary` | Structured outputs, dynamic enums, prompt injection, AI failure modes, token costs | `3484785` |
 
 ### Coming next
 
 | # | Module | What you'll build |
 |---|--------|-------------------|
-| 09 | AI itinerary with OpenAI | Structured output limited to real places |
+| 09b | Show the AI itinerary in the UI | Replace the sample plan with the real one |
 | 10 | Budget calculations | Daily/total estimates computed in code |
 | 11 | Interactive map | Google Maps with markers linked to the itinerary |
 | 12 | Saving trips | Supabase database, save and reopen trips |
@@ -61,8 +62,9 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | Tailwind CSS | 4 | Styling with utility classes |
 | Zod | 4.6 | Validating data |
 | Google Places API (New) | — | Real attractions and restaurants |
+| OpenAI SDK (`openai`) | 7.45 | Itinerary generation with structured outputs (`gpt-6.1-terra`) |
 
-Later modules add OpenAI, Google Maps JavaScript API, and Supabase.
+Later modules add Google Maps JavaScript API and Supabase.
 
 ## A note on secrets
 
