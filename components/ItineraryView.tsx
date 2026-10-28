@@ -1,12 +1,14 @@
-import type { Itinerary, ItineraryItem } from "@/types/trip";
+import type { Itinerary, ItineraryItem, Place } from "@/types/trip";
 
 type Props = {
   itinerary: Itinerary;
-  isSample?: boolean;
+  // The real places the plan was built from, used to show addresses and links.
+  places: Place[];
 };
 
-export default function ItineraryView({ itinerary, isSample = false }: Props) {
+export default function ItineraryView({ itinerary, places }: Props) {
   const dayCount = itinerary.days.length;
+  const placesById = new Map(places.map((place) => [place.id, place]));
 
   return (
     <div className="space-y-6">
@@ -15,17 +17,11 @@ export default function ItineraryView({ itinerary, isSample = false }: Props) {
           Your {dayCount}-day plan for {itinerary.destination}
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          Costs are rough estimates. Prices, opening hours, and availability
-          aren&apos;t guaranteed, so check before you go.
+          Suggested by AI, using only real places from Google. Costs are rough
+          estimates; prices, opening hours, and availability aren&apos;t
+          guaranteed, so check before you go.
         </p>
       </div>
-
-      {isSample && (
-        <p className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
-          <strong>Sample data:</strong> these aren&apos;t real places yet. Real
-          places will come from Google Places in a later step.
-        </p>
-      )}
 
       <ol className="space-y-6">
         {itinerary.days.map((day) => (
@@ -42,6 +38,7 @@ export default function ItineraryView({ itinerary, isSample = false }: Props) {
                 <ItineraryStop
                   key={item.placeId}
                   item={item}
+                  place={placesById.get(item.placeId)}
                   currency={itinerary.currency}
                 />
               ))}
@@ -53,7 +50,15 @@ export default function ItineraryView({ itinerary, isSample = false }: Props) {
   );
 }
 
-function ItineraryStop({ item, currency }: { item: ItineraryItem; currency: string }) {
+function ItineraryStop({
+  item,
+  place,
+  currency,
+}: {
+  item: ItineraryItem;
+  place: Place | undefined;
+  currency: string;
+}) {
   return (
     <li className="flex gap-4">
       <time className="w-12 shrink-0 pt-0.5 font-mono text-sm text-zinc-500">
@@ -68,11 +73,26 @@ function ItineraryStop({ item, currency }: { item: ItineraryItem; currency: stri
         </div>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.reason}</p>
         <p className="mt-1 text-xs text-zinc-500">
-          {formatDuration(item.durationMinutes)} ·{" "}
-          {item.estimatedCost === null
-            ? "No cost estimate"
-            : `~${formatMoney(item.estimatedCost, currency)} (estimate)`}
+          {formatDuration(item.durationMinutes)} · {formatCost(item.estimatedCost, currency)}
         </p>
+        {place && (
+          <p className="mt-1 text-xs text-zinc-500">
+            {place.address}
+            {place.googleMapsUri && (
+              <>
+                {" · "}
+                <a
+                  href={place.googleMapsUri}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+                >
+                  Map<span className="sr-only"> for {item.placeName} (opens in a new tab)</span>
+                </a>
+              </>
+            )}
+          </p>
+        )}
       </div>
     </li>
   );
@@ -83,6 +103,12 @@ function formatDuration(minutes: number): string {
   const rest = minutes % 60;
   if (hours === 0) return `${rest} min`;
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
+}
+
+function formatCost(cost: number | null, currency: string): string {
+  if (cost === null) return "No cost estimate";
+  if (cost === 0) return "Usually free";
+  return `~${formatMoney(cost, currency)} (estimate)`;
 }
 
 function formatMoney(amount: number, currency: string): string {

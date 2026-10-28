@@ -16,14 +16,7 @@ export const placeSchema = z.object({
   googleMapsUri: z.url().nullable(),
 });
 
-// What our own POST /api/places endpoint returns on success.
-// The browser checks it too: even our own server could have a bug.
-export const placesResponseSchema = z.object({
-  destinationName: z.string(),
-  places: z.array(placeSchema),
-});
-
-const googleLatLngSchema =z.object({ latitude: z.number(), longitude: z.number() });
+const googleLatLngSchema = z.object({ latitude: z.number(), longitude: z.number() });
 
 // The rectangle a city/region covers on the map, as Google returns it.
 export const googleViewportSchema = z.object({

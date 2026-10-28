@@ -12,18 +12,23 @@ const SECTIONS: { category: PlaceCategory; title: string }[] = [
 
 export default function PlaceCandidates({ destinationName, places }: Props) {
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Real places we found
+    // <details> is a built-in show/hide control: keyboard and screen-reader
+    // friendly with no JavaScript.
+    <details className="group rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+      <summary className="cursor-pointer list-none">
+        <h2 className="inline text-lg font-semibold">
+          <span aria-hidden="true" className="mr-2 inline-block transition-transform group-open:rotate-90">
+            ›
+          </span>
+          All {places.length} real places we considered
         </h2>
         <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          {places.length} places in {destinationName}, from Google Places. Your
-          itinerary will be built only from these.
+          From Google Places in {destinationName}. Your plan uses only places
+          from this list.
         </p>
-      </div>
+      </summary>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {SECTIONS.map(({ category, title }) => {
           const inSection = places.filter((place) => place.category === category);
           return (
@@ -48,7 +53,7 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
           );
         })}
       </div>
-    </div>
+    </details>
   );
 }
 

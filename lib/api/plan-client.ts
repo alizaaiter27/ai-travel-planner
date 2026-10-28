@@ -1,35 +1,39 @@
-import { placesResponseSchema } from "@/lib/schemas/place";
-import type { Place, TripRequest } from "@/types/trip";
+import { planResponseSchema } from "@/lib/schemas/plan";
+import type { Itinerary, Place, TripRequest } from "@/types/trip";
 
-// Browser-side helper for calling our POST /api/places endpoint.
-// It turns every kind of failure into a PlacesRequestError with a message
+// Browser-side helper for calling our POST /api/itinerary endpoint.
+// It turns every kind of failure into a PlanRequestError with a message
 // that's safe to show to the user.
 
-export class PlacesRequestError extends Error {
+export class PlanRequestError extends Error {
   constructor(
     message: string,
     // Retrying only makes sense for temporary problems (network, server down),
-    // not for "destination not found" or invalid input.
+    // not for "destination not found" or "not enough places".
     readonly canRetry: boolean,
   ) {
     super(message);
-    this.name = "PlacesRequestError";
+    this.name = "PlanRequestError";
   }
 }
 
-export async function fetchPlaces(
-  request: TripRequest,
-): Promise<{ destinationName: string; places: Place[] }> {
+export type Plan = {
+  destinationName: string;
+  places: Place[];
+  itinerary: Itinerary;
+};
+
+export async function fetchPlan(request: TripRequest): Promise<Plan> {
   let response: Response;
   try {
-    response = await fetch("/api/places", {
+    response = await fetch("/api/itinerary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     });
   } catch {
     // fetch only throws when there's no response at all (offline, DNS, etc.).
-    throw new PlacesRequestError(
+    throw new PlanRequestError(
       "We couldn't connect. Check your internet connection and try again.",
       true,
     );
@@ -40,12 +44,12 @@ export async function fetchPlaces(
   if (!response.ok) {
     // 4xx = something about the request (won't fix itself); 5xx = temporary.
     const canRetry = response.status >= 500;
-    throw new PlacesRequestError(readErrorMessage(data), canRetry);
+    throw new PlanRequestError(readErrorMessage(data), canRetry);
   }
 
-  const parsed = placesResponseSchema.safeParse(data);
+  const parsed = planResponseSchema.safeParse(data);
   if (!parsed.success) {
-    throw new PlacesRequestError("We got an unexpected response. Please try again.", true);
+    throw new PlanRequestError("We got an unexpected response. Please try again.", true);
   }
   return parsed.data;
 }

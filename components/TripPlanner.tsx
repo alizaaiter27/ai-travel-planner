@@ -4,29 +4,21 @@ import { useEffect, useRef, useState } from "react";
 import ItineraryView from "@/components/ItineraryView";
 import PlaceCandidates from "@/components/PlaceCandidates";
 import TripForm from "@/components/TripForm";
-import { fetchPlaces, PlacesRequestError } from "@/lib/api/places-client";
-import { getMockItinerary } from "@/lib/mock-itinerary";
-import { itinerarySchema } from "@/lib/schemas/trip";
-import type { Itinerary, Place, TripRequest } from "@/types/trip";
+import { fetchPlan, PlanRequestError, type Plan } from "@/lib/api/plan-client";
+import type { TripRequest } from "@/types/trip";
 
 type Status = "idle" | "loading" | "success" | "error";
-
-type PlanResult = {
-  destinationName: string;
-  places: Place[];
-  itinerary: Itinerary;
-};
 
 type PlanError = {
   message: string;
   canRetry: boolean;
 };
 
-// Owns the planning flow: form → loading → places + itinerary (or an error).
+// Owns the planning flow: form → loading → itinerary (or an error).
 // The form and the results both need this state, so it lives in their parent.
 export default function TripPlanner() {
   const [status, setStatus] = useState<Status>("idle");
-  const [result, setResult] = useState<PlanResult | null>(null);
+  const [plan, setPlan] = useState<Plan | null>(null);
   const [error, setError] = useState<PlanError | null>(null);
   // The last request, so "Try again" can resend it. A ref (not state) because
   // changing it doesn't need to redraw anything.
@@ -45,18 +37,15 @@ export default function TripPlanner() {
   async function handlePlan(request: TripRequest) {
     lastRequest.current = request;
     setStatus("loading");
-    setResult(null);
+    setPlan(null);
     setError(null);
 
     try {
-      const { destinationName, places } = await fetchPlaces(request);
-      // The itinerary is still sample data; Step 6 builds it from `places`.
-      const itinerary = itinerarySchema.parse(getMockItinerary(request));
-      setResult({ destinationName, places, itinerary });
+      setPlan(await fetchPlan(request));
       setStatus("success");
     } catch (err) {
       setError(
-        err instanceof PlacesRequestError
+        err instanceof PlanRequestError
           ? { message: err.message, canRetry: err.canRetry }
           : { message: "Something unexpected went wrong. Please try again.", canRetry: true },
       );
@@ -80,21 +69,15 @@ export default function TripPlanner() {
         </section>
       )}
 
-      {status === "success" && result && (
+      {status === "success" && plan && (
         <section
           ref={outcomeRef}
           tabIndex={-1}
           aria-label="Your trip"
-          className="space-y-12 scroll-mt-6 focus:outline-none"
+          className="space-y-8 scroll-mt-6 focus:outline-none"
         >
-          {result.places.length === 0 ? (
-            <EmptyState destinationName={result.destinationName} />
-          ) : (
-            <>
-              <PlaceCandidates destinationName={result.destinationName} places={result.places} />
-              <ItineraryView itinerary={result.itinerary} isSample />
-            </>
-          )}
+          <ItineraryView itinerary={plan.itinerary} places={plan.places} />
+          <PlaceCandidates destinationName={plan.destinationName} places={plan.places} />
         </section>
       )}
     </div>
@@ -102,9 +85,25 @@ export default function TripPlanner() {
 }
 
 function LoadingState() {
+  // Counts seconds while waiting: a plan takes 15–45 s, and a visible
+  // counter shows the page is still working rather than frozen.
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => clearInterval(timer); // stop counting when loading ends
+  }, []);
+
   return (
-    <div role="status" className="space-y-4">
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">Finding real places…</p>
+    <div className="space-y-4">
+      <div className="text-sm text-zinc-600 dark:text-zinc-400">
+        {/* Only this static line is announced, not every tick of the counter. */}
+        <p role="status">
+          Finding real places and building your plan. This usually takes 15–45 seconds.
+        </p>
+        <p aria-hidden="true" className="mt-1 font-mono text-xs text-zinc-500">
+          {seconds}s
+        </p>
+      </div>
       {/* Grey placeholder blocks shaped like the result ("skeleton" loading). */}
       <div className="animate-pulse space-y-4" aria-hidden="true">
         <div className="h-7 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
@@ -132,18 +131,6 @@ function ErrorState({ error, onRetry }: { error: PlanError; onRetry: () => void 
           Try again
         </button>
       )}
-    </div>
-  );
-}
-
-function EmptyState({ destinationName }: { destinationName: string }) {
-  return (
-    <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-      <p className="font-medium">No matching places found</p>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-        We found {destinationName}, but no places matched your interests. Try
-        choosing different interests, or a larger nearby city.
-      </p>
     </div>
   );
 }
