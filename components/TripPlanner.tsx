@@ -18,7 +18,8 @@ type PlanError = {
 // The form and the results both need this state, so it lives in their parent.
 export default function TripPlanner() {
   const [status, setStatus] = useState<Status>("idle");
-  const [plan, setPlan] = useState<Plan | null>(null);
+  // The plan together with the request that produced it (for the budget).
+  const [result, setResult] = useState<{ plan: Plan; request: TripRequest } | null>(null);
   const [error, setError] = useState<PlanError | null>(null);
   // The last request, so "Try again" can resend it. A ref (not state) because
   // changing it doesn't need to redraw anything.
@@ -37,11 +38,11 @@ export default function TripPlanner() {
   async function handlePlan(request: TripRequest) {
     lastRequest.current = request;
     setStatus("loading");
-    setPlan(null);
+    setResult(null);
     setError(null);
 
     try {
-      setPlan(await fetchPlan(request));
+      setResult({ plan: await fetchPlan(request), request });
       setStatus("success");
     } catch (err) {
       setError(
@@ -69,15 +70,22 @@ export default function TripPlanner() {
         </section>
       )}
 
-      {status === "success" && plan && (
+      {status === "success" && result && (
         <section
           ref={outcomeRef}
           tabIndex={-1}
           aria-label="Your trip"
           className="space-y-8 scroll-mt-6 focus:outline-none"
         >
-          <ItineraryView itinerary={plan.itinerary} places={plan.places} />
-          <PlaceCandidates destinationName={plan.destinationName} places={plan.places} />
+          <ItineraryView
+            itinerary={result.plan.itinerary}
+            places={result.plan.places}
+            budget={result.request.budget}
+          />
+          <PlaceCandidates
+            destinationName={result.plan.destinationName}
+            places={result.plan.places}
+          />
         </section>
       )}
     </div>

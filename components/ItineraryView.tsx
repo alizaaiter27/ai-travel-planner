@@ -1,14 +1,21 @@
+import BudgetSummary from "@/components/BudgetSummary";
+import { formatCost, formatDuration, formatMoney } from "@/lib/format";
+import { summarizeBudget } from "@/lib/itinerary/budget";
 import type { Itinerary, ItineraryItem, Place } from "@/types/trip";
 
 type Props = {
   itinerary: Itinerary;
   // The real places the plan was built from, used to show addresses and links.
   places: Place[];
+  // The traveler's total budget, for the budget summary.
+  budget: number;
 };
 
-export default function ItineraryView({ itinerary, places }: Props) {
+export default function ItineraryView({ itinerary, places, budget }: Props) {
   const dayCount = itinerary.days.length;
   const placesById = new Map(places.map((place) => [place.id, place]));
+  // All totals are calculated here in code, not by the AI.
+  const summary = summarizeBudget(itinerary, budget);
 
   return (
     <div className="space-y-6">
@@ -23,28 +30,40 @@ export default function ItineraryView({ itinerary, places }: Props) {
         </p>
       </div>
 
+      <BudgetSummary summary={summary} currency={itinerary.currency} />
+
       <ol className="space-y-6">
-        {itinerary.days.map((day) => (
-          <li
-            key={day.day}
-            className="rounded-xl border border-zinc-200 p-4 sm:p-5 dark:border-zinc-800"
-          >
-            <h3 className="font-semibold">
-              Day {day.day}
-              <span className="font-normal text-zinc-500"> · {day.theme}</span>
-            </h3>
-            <ol className="mt-4 space-y-4">
-              {day.items.map((item) => (
-                <ItineraryStop
-                  key={item.placeId}
-                  item={item}
-                  place={placesById.get(item.placeId)}
-                  currency={itinerary.currency}
-                />
-              ))}
-            </ol>
-          </li>
-        ))}
+        {itinerary.days.map((day, index) => {
+          const dayCost = summary.days[index];
+          return (
+            <li
+              key={day.day}
+              className="rounded-xl border border-zinc-200 p-4 sm:p-5 dark:border-zinc-800"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 className="font-semibold">
+                  Day {day.day}
+                  <span className="font-normal text-zinc-500"> · {day.theme}</span>
+                </h3>
+                <p className="text-sm text-zinc-500">
+                  ~{formatMoney(dayCost.estimatedTotal, itinerary.currency)}
+                  <span className="sr-only"> estimated for day {day.day}</span>
+                  <span aria-hidden="true"> est.</span>
+                </p>
+              </div>
+              <ol className="mt-4 space-y-4">
+                {day.items.map((item) => (
+                  <ItineraryStop
+                    key={item.placeId}
+                    item={item}
+                    place={placesById.get(item.placeId)}
+                    currency={itinerary.currency}
+                  />
+                ))}
+              </ol>
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
@@ -96,26 +115,4 @@ function ItineraryStop({
       </div>
     </li>
   );
-}
-
-function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  if (hours === 0) return `${rest} min`;
-  return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
-}
-
-function formatCost(cost: number | null, currency: string): string {
-  if (cost === null) return "No cost estimate";
-  if (cost === 0) return "Usually free";
-  return `~${formatMoney(cost, currency)} (estimate)`;
-}
-
-function formatMoney(amount: number, currency: string): string {
-  // Intl.NumberFormat adds the right symbol and format, e.g. "€15" or "¥15".
-  return new Intl.NumberFormat("en", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
