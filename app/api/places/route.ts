@@ -1,40 +1,22 @@
-import { z } from "zod";
+import { readTripRequest } from "@/lib/api/read-trip-request";
 import { PlacesSearchError, searchPlaces } from "@/lib/google-maps/places";
-import { tripRequestSchema } from "@/lib/schemas/trip";
 
 // POST /api/places
 // Body: a trip request (same shape the form sends).
 // Returns: { destinationName, places: Place[] } — real candidates from Google Places,
 // or 404 if Google doesn't recognise the destination.
 export async function POST(request: Request) {
-  // 1. Read the body. Bad JSON is the caller's mistake → 400.
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
-  }
-
-  // 2. Validate with the SAME schema the form uses. Never trust the browser:
-  //    someone could call this URL directly with anything.
-  const parsed = tripRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    return Response.json(
-      {
-        error: "Invalid trip request.",
-        fieldErrors: z.flattenError(parsed.error).fieldErrors,
-      },
-      { status: 400 },
-    );
-  }
+  // 1–2. Read and validate the body (400 on bad JSON or invalid fields).
+  const input = await readTripRequest(request);
+  if ("errorResponse" in input) return input.errorResponse;
 
   // 3. Search Google. Details of failures stay in the server log only.
   try {
-    const result = await searchPlaces(parsed.data);
+    const result = await searchPlaces(input.data);
     if (!result.found) {
       return Response.json(
         {
-          error: `We couldn't find "${parsed.data.destination}". Check the spelling or try a nearby city.`,
+          error: `We couldn't find "${input.data.destination}". Check the spelling or try a nearby city.`,
         },
         { status: 404 },
       );

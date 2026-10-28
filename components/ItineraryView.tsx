@@ -40,7 +40,7 @@ export default function ItineraryView({ itinerary, isSample = false }: Props) {
             <ol className="mt-4 space-y-4">
               {day.items.map((item) => (
                 <ItineraryStop
-                  key={`${item.time}-${item.placeName}`}
+                  key={item.placeId}
                   item={item}
                   currency={itinerary.currency}
                 />

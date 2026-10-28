@@ -4,7 +4,7 @@ import type { Itinerary, ItineraryItem, TripRequest } from "@/types/trip";
 // Place names are deliberately generic ("Sample …") so they can never be
 // mistaken for real, verified places.
 
-const SAMPLE_DAY: ItineraryItem[] = [
+const SAMPLE_DAY: Omit<ItineraryItem, "placeId">[] = [
   {
     time: "09:00",
     placeName: "Sample landmark",
@@ -54,8 +54,9 @@ export function getMockItinerary(request: TripRequest): Itinerary {
     days: Array.from({ length: request.days }, (_, index) => ({
       day: index + 1,
       theme: THEMES[index % THEMES.length],
-      items: SAMPLE_DAY.map((item) => ({
+      items: SAMPLE_DAY.map((item, itemIndex) => ({
         ...item,
+        placeId: `sample-${index + 1}-${itemIndex + 1}`,
         placeName: `${item.placeName} ${index + 1}`,
       })),
     })),

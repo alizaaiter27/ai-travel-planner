@@ -51,6 +51,7 @@ export const placeCategorySchema = z.enum(["attraction", "restaurant"]);
 
 export const itineraryItemSchema = z.object({
   time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { error: "Time must be HH:MM." }),
+  placeId: z.string().min(1), // links the stop to a real Place (and later a map marker)
   placeName: z.string().min(1),
   category: placeCategorySchema,
   reason: z.string().min(1),
