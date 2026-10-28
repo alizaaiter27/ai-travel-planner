@@ -39,17 +39,17 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 07 | [Places Route Handler](07-places-route-handler.md) | `POST /api/places` | Route Handlers, server-only code, external APIs, error handling | `2dfa746` |
 | 08 | [Real places in the UI](08-real-places-ui.md) | Places list; loading, error, retry, empty states | Client `fetch`, `response.ok`, retryable errors, `useRef` | `e544196` |
 | 09 | [AI itinerary with OpenAI](09-ai-itinerary.md) | `POST /api/itinerary` | Structured outputs, dynamic enums, prompt injection, AI failure modes, token costs | `3484785` |
+| 10 | [The AI plan in the UI](10-ai-plan-ui.md) | Real plan on the page | Replacing a data source, `.refine()`, honest loading, effect cleanup, `<details>` | `ac1ad0b` |
 
 ### Coming next
 
 | # | Module | What you'll build |
 |---|--------|-------------------|
-| 09b | Show the AI itinerary in the UI | Replace the sample plan with the real one |
-| 10 | Budget calculations | Daily/total estimates computed in code |
-| 11 | Interactive map | Google Maps with markers linked to the itinerary |
-| 12 | Saving trips | Supabase database, save and reopen trips |
-| 13 | Testing & hardening | Failure cases, security checks, mobile |
-| 14 | Polish & deploy | README, screenshots, deploy to Vercel |
+| 11 | Budget calculations | Daily/total estimates computed in code |
+| 12 | Interactive map | Google Maps with markers linked to the itinerary |
+| 13 | Saving trips | Supabase database, save and reopen trips |
+| 14 | Testing & hardening | Failure cases, security checks, mobile |
+| 15 | Polish & deploy | README, screenshots, deploy to Vercel |
 
 ## Tech stack (versions used in this course)
 
