@@ -44,12 +44,9 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 12 | [Interactive map](12-map.md) | Map with day-colored markers linked to the list | Public vs. secret keys, `useMap`, shared selection state, effect dependencies, sticky layout | `2256e42` |
 | 13 | [Saving trips](13-saving-trips.md) | Supabase storage, private share links | RLS, HMAC signatures, random IDs, Suspense + `notFound`, `useSyncExternalStore` | `f2115d5` |
 | 14 | [Testing & hardening](14-hardening.md) | Rate limits, size limits, headers | Shared counters, race conditions, fail open vs. closed, bundle scanning, dev vs. prod errors | `0ae40d2` |
+| 15 | [README & deploy](15-deploy.md) | Live app on Vercel | README structure, `maxDuration`, env vars in production, reading logs, `gm_authFailure` | `471ec5a` |
 
-### Coming next
-
-| # | Module | What you'll build |
-|---|--------|-------------------|
-| 15 | Polish & deploy | README, screenshots, deploy to Vercel |
+The live app: <https://ai-travel-planner-beta-six.vercel.app>
 
 ## Tech stack (versions used in this course)
 

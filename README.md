@@ -6,7 +6,7 @@ Google Places, has an AI organize **only those places** into a schedule, shows
 everything on a map, estimates costs, and lets you save the plan as a private
 link.
 
-> **Live demo:** _coming soon (deploying to Vercel)_
+> **Live demo:** <https://ai-travel-planner-beta-six.vercel.app>
 >
 > **Learn how it was built:** a step-by-step course in [`docs/course/`](docs/course/README.md), one module per milestone.
 

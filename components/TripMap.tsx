@@ -30,6 +30,20 @@ type Props = {
 export default function TripMap({ itinerary, places, visibleDay, selectedPlaceId, onSelect }: Props) {
   const [loadFailed, setLoadFailed] = useState(false);
 
+  // Google reports key problems (e.g. this website isn't allowed for the key)
+  // by calling a global window.gm_authFailure function, not through the
+  // loader's onError, so listen for it too.
+  useEffect(() => {
+    const w = window as Window & { gm_authFailure?: () => void };
+    w.gm_authFailure = () => {
+      console.error("[map] Google Maps rejected the browser key for this website");
+      setLoadFailed(true);
+    };
+    return () => {
+      delete w.gm_authFailure;
+    };
+  }, []);
+
   if (!API_KEY || loadFailed) {
     return (
       <div className="flex h-full min-h-64 items-center justify-center rounded-xl border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500 dark:border-zinc-700">
