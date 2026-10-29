@@ -19,7 +19,7 @@ export default function RecentTrips() {
           <li key={trip.id} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
             <Link
               href={`/trips/${trip.id}`}
-              className="min-w-0 truncate font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+              className="block min-w-0 truncate py-1.5 font-medium text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
             >
               {trip.title}
             </Link>
@@ -31,7 +31,7 @@ export default function RecentTrips() {
                 type="button"
                 onClick={() => forgetSavedTrip(trip.id)}
                 aria-label={`Remove ${trip.title} from this list`}
-                className="rounded px-1 hover:text-zinc-900 dark:hover:text-zinc-100"
+                className="rounded px-2 py-1.5 hover:text-zinc-900 dark:hover:text-zinc-100"
               >
                 Remove
               </button>

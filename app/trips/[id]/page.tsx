@@ -24,7 +24,11 @@ export async function generateMetadata({ params }: PageProps<"/trips/[id]">): Pr
 export default function TripPage({ params }: PageProps<"/trips/[id]">) {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
-      <Link href="/" className="text-sm text-sky-700 underline-offset-2 hover:underline dark:text-sky-400">
+      {/* py-2 gives the link a comfortable tap height on phones. */}
+      <Link
+        href="/"
+        className="inline-block py-2 text-sm text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+      >
         ← Plan a new trip
       </Link>
       <div className="mt-6">

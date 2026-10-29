@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { readJsonBody } from "@/lib/api/read-json";
+import { checkRateLimits, tooManyRequests } from "@/lib/rate-limit";
 import { saveTripBodySchema } from "@/lib/schemas/plan";
 import { verifyPayload } from "@/lib/trips/signature";
 import { saveTrip, TripStoreError } from "@/lib/trips/store";
@@ -7,18 +9,20 @@ import { saveTrip, TripStoreError } from "@/lib/trips/store";
 // Body: { request, plan, signature } exactly as received from /api/itinerary.
 // Returns: { id } — the new trip's ID for its share link (/trips/<id>).
 export async function POST(request: Request) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
-  }
+  // A saved plan (≤ 14 days, ≤ 100 places) is well under 150 KB.
+  const body = await readJsonBody(request, 300_000);
+  if ("errorResponse" in body) return body.errorResponse;
 
-  const parsed = saveTripBodySchema.safeParse(body);
+  const parsed = saveTripBodySchema.safeParse(body.data);
   if (!parsed.success) {
     console.warn("[api/trips] invalid body", z.flattenError(parsed.error).fieldErrors);
     return Response.json({ error: "This trip can't be saved." }, { status: 400 });
   }
+
+  const limited = await checkRateLimits(request, [
+    { name: "save", limit: 30, windowSeconds: 3600, scope: "ip" },
+  ]);
+  if (!limited.ok) return tooManyRequests(limited.retryAfterSeconds);
 
   // Only plans our server generated (and that weren't changed since) can be
   // saved, so nobody can store a made-up plan under our website's address.

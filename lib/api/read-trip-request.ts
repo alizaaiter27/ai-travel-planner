@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { readJsonBody } from "@/lib/api/read-json";
 import { tripRequestSchema } from "@/lib/schemas/trip";
 import type { TripRequest } from "@/types/trip";
 
@@ -8,17 +9,12 @@ import type { TripRequest } from "@/types/trip";
 export async function readTripRequest(
   request: Request,
 ): Promise<{ data: TripRequest } | { errorResponse: Response }> {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return {
-      errorResponse: Response.json({ error: "Request body must be valid JSON." }, { status: 400 }),
-    };
-  }
+  // A trip request is well under 2 KB; 10 KB leaves plenty of room.
+  const body = await readJsonBody(request, 10_000);
+  if ("errorResponse" in body) return body;
 
   // Never trust the browser: someone could call the endpoint with anything.
-  const parsed = tripRequestSchema.safeParse(body);
+  const parsed = tripRequestSchema.safeParse(body.data);
   if (!parsed.success) {
     return {
       errorResponse: Response.json(

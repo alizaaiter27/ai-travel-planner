@@ -1,6 +1,7 @@
 import { AiItineraryError, generateItinerary } from "@/lib/ai/itinerary";
 import { readTripRequest } from "@/lib/api/read-trip-request";
 import { PlacesSearchError, searchPlaces } from "@/lib/google-maps/places";
+import { checkRateLimits, tooManyRequests } from "@/lib/rate-limit";
 import { signPayload } from "@/lib/trips/signature";
 
 // The AI needs some choice: at least this many real places per trip day.
@@ -15,6 +16,14 @@ export async function POST(request: Request) {
   const input = await readTripRequest(request);
   if ("errorResponse" in input) return input.errorResponse;
   const trip = input.data;
+
+  // Each plan costs real money (≈5 Google requests + 1 AI call), so limit
+  // per visitor and for the whole app (a cap on the worst-case daily bill).
+  const limited = await checkRateLimits(request, [
+    { name: "itinerary", limit: 10, windowSeconds: 3600, scope: "ip" },
+    { name: "itinerary", limit: 200, windowSeconds: 86400, scope: "global" },
+  ]);
+  if (!limited.ok) return tooManyRequests(limited.retryAfterSeconds);
 
   try {
     // 1. Real candidate places.
