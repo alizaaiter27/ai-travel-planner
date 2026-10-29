@@ -4,6 +4,10 @@ import { PlacesSearchError, searchPlaces } from "@/lib/google-maps/places";
 import { checkRateLimits, tooManyRequests } from "@/lib/rate-limit";
 import { signPayload } from "@/lib/trips/signature";
 
+// Max run time on the hosting platform, in seconds. Worst case: ~10 s of
+// Google searches + a 90 s AI call + one 90 s retry (see lib/ai/client.ts).
+export const maxDuration = 200;
+
 // The AI needs some choice: at least this many real places per trip day.
 const MIN_PLACES_PER_DAY = 2;
 
