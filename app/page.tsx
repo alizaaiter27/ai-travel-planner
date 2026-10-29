@@ -1,3 +1,4 @@
+import RecentTrips from "@/components/RecentTrips";
 import TripPlanner from "@/components/TripPlanner";
 
 export default function Home() {
@@ -13,6 +14,9 @@ export default function Home() {
       </p>
       <div className="mt-10">
         <TripPlanner />
+      </div>
+      <div className="mt-16">
+        <RecentTrips />
       </div>
     </main>
   );

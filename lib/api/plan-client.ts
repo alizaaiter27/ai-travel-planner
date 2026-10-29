@@ -1,5 +1,6 @@
+import type { z } from "zod";
 import { planResponseSchema } from "@/lib/schemas/plan";
-import type { Itinerary, Place, TripRequest } from "@/types/trip";
+import type { TripRequest } from "@/types/trip";
 
 // Browser-side helper for calling our POST /api/itinerary endpoint.
 // It turns every kind of failure into a PlanRequestError with a message
@@ -17,11 +18,8 @@ export class PlanRequestError extends Error {
   }
 }
 
-export type Plan = {
-  destinationName: string;
-  places: Place[];
-  itinerary: Itinerary;
-};
+// destinationName, places, itinerary, and the server's signature (for saving).
+export type Plan = z.infer<typeof planResponseSchema>;
 
 export async function fetchPlan(request: TripRequest): Promise<Plan> {
   let response: Response;

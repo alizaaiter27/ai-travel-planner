@@ -1,20 +1,36 @@
 import { z } from "zod";
 import { placeSchema } from "@/lib/schemas/place";
-import { itinerarySchema } from "@/lib/schemas/trip";
+import { itinerarySchema, tripRequestSchema } from "@/lib/schemas/trip";
 
-// What POST /api/itinerary returns on success. The browser checks it before
-// showing anything: even our own server could have a bug.
-export const planResponseSchema = z
-  .object({
-    destinationName: z.string(),
-    places: z.array(placeSchema),
-    itinerary: itinerarySchema,
-  })
-  // Extra safety net for the core rule: every stop must be one of the places.
-  .refine(
-    ({ places, itinerary }) => {
-      const ids = new Set(places.map((p) => p.id));
-      return itinerary.days.every((day) => day.items.every((item) => ids.has(item.placeId)));
-    },
-    { error: "Itinerary contains a place that wasn't in the candidate list." },
-  );
+const planFields = z.object({
+  destinationName: z.string().min(1).max(300),
+  places: z.array(placeSchema).max(100),
+  itinerary: itinerarySchema,
+});
+
+// The core rule as a check: every itinerary stop must be one of the places.
+function stopsAreKnownPlaces(plan: z.infer<typeof planFields>): boolean {
+  const ids = new Set(plan.places.map((p) => p.id));
+  return plan.itinerary.days.every((day) => day.items.every((item) => ids.has(item.placeId)));
+}
+const unknownPlaceError = { error: "Itinerary contains a place that wasn't in the candidate list." };
+
+// A generated plan: real places + the itinerary built from them.
+export const planSchema = planFields.refine(stopsAreKnownPlaces, unknownPlaceError);
+
+// What POST /api/itinerary returns. `signature` proves our server produced
+// this exact plan (null if signing isn't configured, which disables saving).
+export const planResponseSchema = planFields
+  .extend({ signature: z.string().nullable() })
+  .refine(stopsAreKnownPlaces, unknownPlaceError);
+
+// What gets signed, saved, and loaded: the request and the plan together.
+export const savePayloadSchema = z.object({
+  request: tripRequestSchema,
+  plan: planSchema,
+});
+
+// The body of POST /api/trips.
+export const saveTripBodySchema = savePayloadSchema.extend({
+  signature: z.string().regex(/^[0-9a-f]{64}$/),
+});

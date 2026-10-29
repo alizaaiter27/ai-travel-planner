@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ItineraryView from "@/components/ItineraryView";
 import PlaceCandidates from "@/components/PlaceCandidates";
+import SaveTripPanel from "@/components/SaveTripPanel";
 import TripForm from "@/components/TripForm";
 import { fetchPlan, PlanRequestError, type Plan } from "@/lib/api/plan-client";
 import type { TripRequest } from "@/types/trip";
@@ -93,6 +94,7 @@ export default function TripPlanner() {
             places={result.plan.places}
             budget={result.request.budget}
           />
+          <SaveTripPanel request={result.request} plan={result.plan} />
           <PlaceCandidates
             destinationName={result.plan.destinationName}
             places={result.plan.places}

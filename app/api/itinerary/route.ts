@@ -1,14 +1,16 @@
 import { AiItineraryError, generateItinerary } from "@/lib/ai/itinerary";
 import { readTripRequest } from "@/lib/api/read-trip-request";
 import { PlacesSearchError, searchPlaces } from "@/lib/google-maps/places";
+import { signPayload } from "@/lib/trips/signature";
 
 // The AI needs some choice: at least this many real places per trip day.
 const MIN_PLACES_PER_DAY = 2;
 
 // POST /api/itinerary
 // Body: a trip request.
-// Returns: { destinationName, places, itinerary } where every itinerary stop
-// is one of the real `places` from Google.
+// Returns: { destinationName, places, itinerary, signature } where every
+// itinerary stop is one of the real `places` from Google, and `signature`
+// lets the plan be saved later (see /api/trips).
 export async function POST(request: Request) {
   const input = await readTripRequest(request);
   if ("errorResponse" in input) return input.errorResponse;
@@ -37,12 +39,12 @@ export async function POST(request: Request) {
 
     // 3. AI organizes the real places into days; our code checks the result.
     const itinerary = await generateItinerary(trip, result.places);
+    const plan = { destinationName: result.destinationName, places: result.places, itinerary };
 
-    return Response.json({
-      destinationName: result.destinationName,
-      places: result.places,
-      itinerary,
-    });
+    // 4. Sign the plan so POST /api/trips can check it really came from us.
+    const signature = signPayload({ request: trip, plan });
+
+    return Response.json({ ...plan, signature });
   } catch (error) {
     console.error("[api/itinerary]", error);
 
