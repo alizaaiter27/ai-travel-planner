@@ -2,7 +2,7 @@ import TripPlanner from "@/components/TripPlanner";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
       <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
         AI Travel Planner
       </h1>

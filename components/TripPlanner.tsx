@@ -60,12 +60,23 @@ export default function TripPlanner() {
 
   return (
     <div className="space-y-12">
-      <TripForm onSubmit={handlePlan} isLoading={status === "loading"} />
+      <div className="max-w-3xl">
+        <TripForm onSubmit={handlePlan} isLoading={status === "loading"} />
+      </div>
 
-      {status === "loading" && <LoadingState />}
+      {status === "loading" && (
+        <div className="max-w-3xl">
+          <LoadingState />
+        </div>
+      )}
 
       {status === "error" && error && (
-        <section ref={outcomeRef} tabIndex={-1} aria-label="Error" className="focus:outline-none">
+        <section
+          ref={outcomeRef}
+          tabIndex={-1}
+          aria-label="Error"
+          className="max-w-3xl focus:outline-none"
+        >
           <ErrorState error={error} onRetry={handleRetry} />
         </section>
       )}
