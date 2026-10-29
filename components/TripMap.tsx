@@ -46,7 +46,7 @@ export default function TripMap({ itinerary, places, visibleDay, selectedPlaceId
 
   if (!API_KEY || loadFailed) {
     return (
-      <div className="flex h-full min-h-64 items-center justify-center rounded-xl border border-dashed border-zinc-300 p-6 text-center text-sm text-zinc-500 dark:border-zinc-700">
+      <div className="flex h-full min-h-64 items-center justify-center rounded-xl border border-dashed border-line-strong p-6 text-center text-sm text-ink-muted">
         The map isn&apos;t available right now. The itinerary and its Google
         Maps links still work.
       </div>
@@ -66,7 +66,7 @@ export default function TripMap({ itinerary, places, visibleDay, selectedPlaceId
         gestureHandling="cooperative" // on phones, one finger scrolls the page, two move the map
         disableDefaultUI
         zoomControl
-        className="h-full min-h-64 w-full overflow-hidden rounded-xl"
+        className="h-full min-h-64 w-full overflow-hidden rounded-xl bg-surface-muted"
       >
         {stops.map((stop) => {
           const selected = stop.placeId === selectedPlaceId;

@@ -51,7 +51,7 @@ export default function ItineraryView({ itinerary, places, budget }: Props) {
         <h2 className="text-2xl font-semibold tracking-tight">
           Your {dayCount}-day plan for {itinerary.destination}
         </h2>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-ink-muted">
           Suggested by AI, using only real places from Google. Costs are rough
           estimates; prices, opening hours, and availability aren&apos;t
           guaranteed, so check before you go.
@@ -92,7 +92,7 @@ export default function ItineraryView({ itinerary, places, budget }: Props) {
               <li
                 key={day.day}
                 className={
-                  "rounded-xl border border-zinc-200 p-4 transition-opacity sm:p-5 dark:border-zinc-800 " +
+                  "rounded-xl border border-line bg-surface p-4 transition-opacity sm:p-5 " +
                   (dimmed ? "opacity-50" : "")
                 }
               >
@@ -104,9 +104,9 @@ export default function ItineraryView({ itinerary, places, budget }: Props) {
                       style={{ backgroundColor: dayColor(day.day) }}
                     />
                     Day {day.day}
-                    <span className="font-normal text-zinc-500"> · {day.theme}</span>
+                    <span className="font-normal text-ink-muted"> · {day.theme}</span>
                   </h3>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm text-ink-muted">
                     ~{formatMoney(dayCost.estimatedTotal, itinerary.currency)}
                     <span className="sr-only"> estimated for day {day.day}</span>
                     <span aria-hidden="true"> est.</span>
@@ -156,10 +156,10 @@ function DayFilter({
             aria-pressed={active}
             onClick={() => onChange(day)}
             className={
-              "rounded-full border px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 " +
+              "rounded-full border px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary " +
               (active
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-                : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700")
+                ? "border-ink bg-ink text-canvas"
+                : "border-line-strong hover:border-primary")
             }
           >
             {day === null ? "All days" : `Day ${day}`}
@@ -192,7 +192,7 @@ function ItineraryStop({
       data-place-id={item.placeId}
       className={
         "flex scroll-mt-4 gap-3 rounded-lg p-2 transition-colors " +
-        (selected ? "bg-sky-50 ring-2 ring-sky-600 dark:bg-sky-950" : "")
+        (selected ? "bg-primary-soft ring-2 ring-primary" : "")
       }
     >
       {/* The numbered badge matches the marker on the map. */}
@@ -201,25 +201,25 @@ function ItineraryStop({
         onClick={onSelect}
         aria-pressed={selected}
         aria-label={`Show ${item.placeName} on the map (day ${day}, stop ${number})`}
-        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 focus-visible:ring-offset-2"
+        className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         style={{ backgroundColor: dayColor(day) }}
       >
         {number}
       </button>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <time className="font-mono text-sm text-zinc-500">{item.time}</time>
+          <time className="font-mono text-sm text-ink-muted">{item.time}</time>
           <span className="font-medium">{item.placeName}</span>
-          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs capitalize text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+          <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs capitalize text-ink-muted">
             {item.category}
           </span>
         </div>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{item.reason}</p>
-        <p className="mt-1 text-xs text-zinc-500">
+        <p className="mt-1 text-sm text-ink-muted">{item.reason}</p>
+        <p className="mt-1 text-xs text-ink-muted">
           {formatDuration(item.durationMinutes)} · {formatCost(item.estimatedCost, currency)}
         </p>
         {place && (
-          <p className="mt-1 text-xs text-zinc-500">
+          <p className="mt-1 text-xs text-ink-muted">
             {place.address}
             {place.googleMapsUri && (
               <>
@@ -228,7 +228,7 @@ function ItineraryStop({
                   href={place.googleMapsUri}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+                  className="text-primary underline-offset-2 hover:underline"
                 >
                   Google Maps<span className="sr-only"> for {item.placeName} (opens in a new tab)</span>
                 </a>

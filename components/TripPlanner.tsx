@@ -116,20 +116,20 @@ function LoadingState() {
 
   return (
     <div className="space-y-4">
-      <div className="text-sm text-zinc-600 dark:text-zinc-400">
+      <div className="text-sm text-ink-muted">
         {/* Only this static line is announced, not every tick of the counter. */}
         <p role="status">
           Finding real places and building your plan. This usually takes 15–45 seconds.
         </p>
-        <p aria-hidden="true" className="mt-1 font-mono text-xs text-zinc-500">
+        <p aria-hidden="true" className="mt-1 font-mono text-xs text-ink-muted">
           {seconds}s
         </p>
       </div>
       {/* Grey placeholder blocks shaped like the result ("skeleton" loading). */}
       <div className="animate-pulse space-y-4" aria-hidden="true">
-        <div className="h-7 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-40 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-40 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-7 w-2/3 rounded bg-surface-muted" />
+        <div className="h-40 rounded-xl bg-surface-muted" />
+        <div className="h-40 rounded-xl bg-surface-muted" />
       </div>
     </div>
   );

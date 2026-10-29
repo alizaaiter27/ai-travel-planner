@@ -46,9 +46,9 @@ function toFormErrors(error: z.ZodError<TripRequest>): FormErrors {
 }
 
 const inputClass =
-  "mt-1 block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-base text-zinc-900 " +
-  "focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-600/30 " +
-  "aria-[invalid=true]:border-red-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100";
+  "mt-1 block w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-base text-ink " +
+  "focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 " +
+  "aria-[invalid=true]:border-red-600";
 
 type Props = {
   onSubmit: (request: TripRequest) => void;
@@ -190,10 +190,10 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
                 key={interest}
                 className={
                   "cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors " +
-                  "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-sky-600/40 " +
+                  "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/40 " +
                   (checked
-                    ? "border-sky-600 bg-sky-600 text-white"
-                    : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700")
+                    ? "border-primary bg-primary text-on-primary"
+                    : "border-line-strong hover:border-primary")
                 }
               >
                 <input
@@ -215,7 +215,7 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
       <div>
         <label htmlFor="preferences" className="block text-sm font-medium">
           Other preferences{" "}
-          <span className="font-normal text-zinc-500">(optional)</span>
+          <span className="font-normal text-ink-muted">(optional)</span>
         </label>
         <textarea
           id="preferences"
@@ -229,7 +229,7 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
           }
           className={inputClass}
         />
-        <p className="mt-1 text-right text-xs text-zinc-500">
+        <p className="mt-1 text-right text-xs text-ink-muted">
           {values.preferences.length}/{MAX_PREFERENCES_LENGTH}
         </p>
         <FieldError id="preferences-error" message={errors.preferences} />
@@ -238,7 +238,7 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full rounded-lg bg-sky-600 px-5 py-3 font-medium text-white transition-colors hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="w-full rounded-lg bg-accent px-5 py-3 font-medium text-on-accent transition-colors hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {isLoading ? "Planning…" : "Plan my trip"}
       </button>

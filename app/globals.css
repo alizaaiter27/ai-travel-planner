@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  Design tokens. Components use these names (bg-canvas, text-ink-muted,
+  bg-accent, …) instead of raw palette colours, so the whole look — and
+  dark mode — is changed here in one place.
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  Palette: sky blue (trust, travel) + adventure orange for the main action.
+  Every text/background pair is checked for WCAG contrast (4.5:1 for text,
+  3:1 for input borders and focus rings).
+*/
+:root {
+  color-scheme: light;
+  --canvas: #f0f9ff; /* page background */
+  --surface: #ffffff; /* cards, inputs */
+  --surface-muted: #e3eff7; /* skeletons, pills, hover backgrounds */
+  --ink: #0b2540; /* main text */
+  --ink-muted: #475569; /* secondary text */
+  --line: #cfe3f1; /* card borders (decorative) */
+  --line-strong: #71849b; /* input borders (must be visible) */
+  --primary: #0369a1; /* links, focus, selection */
+  --on-primary: #ffffff;
+  --primary-soft: #e0f2fe; /* selected item background */
+  --accent: #c2410c; /* main call to action */
+  --accent-hover: #9a3412;
+  --on-accent: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+    --canvas: #0a1422;
+    --surface: #0f1d30;
+    --surface-muted: #1a2b42;
+    --ink: #e7eef6;
+    --ink-muted: #9baec4;
+    --line: #1f3149;
+    --line-strong: #5d7390;
+    --primary: #38bdf8;
+    --on-primary: #04121f;
+    --primary-soft: #0c2a42;
+    --accent: #fb923c;
+    --accent-hover: #fdba74;
+    --on-accent: #1a0a00;
   }
 }
 
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
+  --font-mono: var(--font-geist-mono);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--canvas);
+  color: var(--ink);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Page and section titles use the editorial serif. */
+h1,
+h2 {
+  font-family: var(--font-display), Georgia, serif;
 }

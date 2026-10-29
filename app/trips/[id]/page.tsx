@@ -27,12 +27,12 @@ export default function TripPage({ params }: PageProps<"/trips/[id]">) {
       {/* py-2 gives the link a comfortable tap height on phones. */}
       <Link
         href="/"
-        className="inline-block py-2 text-sm text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+        className="inline-block py-2 text-sm text-primary underline-offset-2 hover:underline"
       >
         ← Plan a new trip
       </Link>
       <div className="mt-6">
-        <Suspense fallback={<p className="text-sm text-zinc-500">Loading trip…</p>}>
+        <Suspense fallback={<p className="text-sm text-ink-muted">Loading trip…</p>}>
           {params.then(({ id }) => (
             <SavedTrip id={id} />
           ))}
@@ -50,7 +50,7 @@ async function SavedTrip({ id }: { id: string }) {
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-zinc-500">Saved trip · {saved}</p>
+      <p className="text-sm text-ink-muted">Saved trip · {saved}</p>
       <ItineraryView itinerary={trip.plan.itinerary} places={trip.plan.places} budget={trip.request.budget} />
       <PlaceCandidates destinationName={trip.plan.destinationName} places={trip.plan.places} />
     </div>

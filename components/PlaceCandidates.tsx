@@ -14,7 +14,7 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
   return (
     // <details> is a built-in show/hide control: keyboard and screen-reader
     // friendly with no JavaScript.
-    <details className="group rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
+    <details className="group rounded-xl border border-line bg-surface p-4">
       <summary className="cursor-pointer list-none">
         <h2 className="inline text-lg font-semibold">
           <span aria-hidden="true" className="mr-2 inline-block transition-transform group-open:rotate-90">
@@ -22,7 +22,7 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
           </span>
           All {places.length} real places we considered
         </h2>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-1 text-sm text-ink-muted">
           From Google Places in {destinationName}. Your plan uses only places
           from this list.
         </p>
@@ -35,13 +35,13 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
             <section
               key={category}
               aria-labelledby={`places-${category}`}
-              className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800"
+              className="rounded-xl border border-line bg-surface p-4"
             >
               <h3 id={`places-${category}`} className="font-semibold">
-                {title} <span className="font-normal text-zinc-500">({inSection.length})</span>
+                {title} <span className="font-normal text-ink-muted">({inSection.length})</span>
               </h3>
               {inSection.length === 0 ? (
-                <p className="mt-2 text-sm text-zinc-500">None found.</p>
+                <p className="mt-2 text-sm text-ink-muted">None found.</p>
               ) : (
                 <ul className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
                   {inSection.map((place) => (
@@ -63,16 +63,16 @@ function PlaceRow({ place }: { place: Place }) {
       <div className="flex flex-wrap items-baseline gap-x-2">
         <span className="font-medium">{place.name}</span>
         {place.primaryType && (
-          <span className="text-xs text-zinc-500">{formatType(place.primaryType)}</span>
+          <span className="text-xs text-ink-muted">{formatType(place.primaryType)}</span>
         )}
       </div>
-      <p className="text-xs text-zinc-500">{place.address}</p>
+      <p className="text-xs text-ink-muted">{place.address}</p>
       {place.googleMapsUri && (
         <a
           href={place.googleMapsUri}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-sky-700 underline-offset-2 hover:underline dark:text-sky-400"
+          className="text-xs text-primary underline-offset-2 hover:underline"
         >
           View on Google Maps<span className="sr-only"> (opens in a new tab)</span>
         </a>
