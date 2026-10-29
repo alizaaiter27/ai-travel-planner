@@ -1,6 +1,6 @@
 # Module 19 — The itinerary: timeline, icons, and tap targets
 
-**Commit:** the commit adding this module · **Time:** ~60 minutes
+**Commit:** `8cd936f` · **Time:** ~60 minutes
 
 ## Goal
 

@@ -71,10 +71,13 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* Page and section titles use the editorial serif. */
-h1,
-h2 {
-  font-family: var(--font-display), Georgia, serif;
+/* Page and section titles use the editorial serif. In the base layer, so a
+   utility class (e.g. font-sans) on a heading can still override it. */
+@layer base {
+  h1,
+  h2 {
+    font-family: var(--font-display), Georgia, serif;
+  }
 }
 
 /*

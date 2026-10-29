@@ -5,9 +5,10 @@ import type { BudgetSummary as Summary } from "@/lib/itinerary/budget";
 type Props = {
   summary: Summary;
   currency: string;
+  headingAs?: "h2" | "h3";
 };
 
-export default function BudgetSummary({ summary, currency }: Props) {
+export default function BudgetSummary({ summary, currency, headingAs: Heading = "h3" }: Props) {
   const over = summary.remaining < 0;
   // The bar never draws past 100%; "over budget" is shown in words and color.
   const barWidth = Math.min(summary.usedPercent, 100);
@@ -17,10 +18,10 @@ export default function BudgetSummary({ summary, currency }: Props) {
       aria-labelledby="budget-heading"
       className="rounded-2xl border border-line bg-surface p-4 sm:p-6"
     >
-      <h3 id="budget-heading" className="flex items-center gap-2 font-semibold">
+      <Heading id="budget-heading" className="flex items-center gap-2 font-sans font-semibold">
         <WalletIcon className="h-5 w-5 text-primary" />
         Budget estimate
-      </h3>
+      </Heading>
 
       <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
         <div>

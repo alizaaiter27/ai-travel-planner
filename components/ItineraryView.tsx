@@ -58,6 +58,8 @@ export default function ItineraryView({ itinerary, places, budget, titleAs = "h2
 
   const stopCount = itinerary.days.reduce((total, day) => total + day.items.length, 0);
   const Title = titleAs;
+  // Section headings sit one level below the title (h1 → h2, h2 → h3).
+  const Subheading = titleAs === "h1" ? "h2" : "h3";
 
   return (
     <div className="space-y-6">
@@ -76,7 +78,7 @@ export default function ItineraryView({ itinerary, places, budget, titleAs = "h2
       </div>
 
       <div className="max-w-3xl">
-        <BudgetSummary summary={summary} currency={itinerary.currency} />
+        <BudgetSummary summary={summary} currency={itinerary.currency} headingAs={Subheading} />
       </div>
 
       {/* Two columns on large screens: list left, map right (sticky). */}
@@ -114,7 +116,7 @@ export default function ItineraryView({ itinerary, places, budget, titleAs = "h2
                 }
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
-                  <h3 className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <Subheading className="flex flex-wrap items-center gap-x-3 gap-y-1 font-sans">
                     <span
                       className="rounded-full px-3 py-1 text-sm font-semibold text-white"
                       style={{ backgroundColor: dayColor(day.day) }}
@@ -122,7 +124,7 @@ export default function ItineraryView({ itinerary, places, budget, titleAs = "h2
                       Day {day.day}
                     </span>
                     <span className="font-display text-xl font-semibold">{day.theme}</span>
-                  </h3>
+                  </Subheading>
                   <p className="flex items-center gap-1.5 text-sm text-ink-muted">
                     <WalletIcon className="h-4 w-4" />
                     ~{formatMoney(dayCost.estimatedTotal, itinerary.currency)}

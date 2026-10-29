@@ -10,7 +10,7 @@ link.
 >
 > **Learn how it was built:** a step-by-step course in [`docs/course/`](docs/course/README.md), one module per milestone.
 
-![Itinerary with linked map](docs/screenshots/itinerary-and-map.jpg)
+![Home page: plan a trip with real places](docs/screenshots/home-hero.jpg)
 
 ## The problem
 
@@ -25,8 +25,8 @@ good at (organizing, explaining) and takes the facts from a real data source:
 
 ## Features
 
-- **Trip form** — destination, 1–14 days, budget, currency, interests,
-  optional preferences; accessible validation messages.
+- **Trip form** — destination, 1–14 days, budget, currency, up to three
+  interests, optional preferences; hints and accessible validation messages.
 - **Real places** — attractions and restaurants from Google Places, restricted
   to the destination's area. Unknown destinations get a clear message.
 - **AI itinerary** — time slots, reasons, durations, and cost estimates,
@@ -38,20 +38,27 @@ good at (organizing, explaining) and takes the facts from a real data source:
   in code and clearly labeled as estimates.
 - **Saved trips** — save a plan to a private, unguessable link; reopen it on
   any device. "Your saved trips" lists the ones saved in this browser.
-- **Useful states** — loading with time expectations, errors with retry where
+- **Useful states** — step-by-step loading progress, errors with retry where
   it helps, "not enough places" instead of made-up filler.
 - **Responsive** — list + sticky map on desktop, stacked on phones.
+- **Designed and accessible** — a travel palette built from design tokens,
+  light and dark mode, 44 px touch targets, visible keyboard focus, reduced
+  motion respected, and zero violations in an axe-core WCAG 2.2 AA audit.
 
-| Trip form | Budget estimate | Phone |
+| Trip form | Planning progress | Budget estimate |
 |---|---|---|
-| ![Trip form](docs/screenshots/trip-form.jpg) | ![Plan and budget](docs/screenshots/plan-and-budget.jpg) | ![Phone layout](docs/screenshots/mobile.jpg) |
+| ![Trip form](docs/screenshots/trip-form.jpg) | ![Step-by-step loading](docs/screenshots/loading.jpg) | ![Plan and budget](docs/screenshots/plan-and-budget.jpg) |
+
+| Itinerary with linked map | Phone |
+|---|---|
+| ![Itinerary timeline next to the map](docs/screenshots/itinerary-and-map.jpg) | ![Phone layout](docs/screenshots/mobile.jpg) |
 
 ## Tech stack
 
 | Area | Technology |
 |---|---|
 | Framework | Next.js 16 (App Router, Route Handlers, Cache Components), React 19, TypeScript |
-| Styling | Tailwind CSS 4 |
+| Styling | Tailwind CSS 4 with design tokens; Playfair Display + Inter via `next/font` |
 | Validation | Zod 4 (shared by browser and server) |
 | Places | Google Places API (New) — Text Search |
 | AI | OpenAI Responses API with structured outputs (`gpt-6.1-terra` by default) |
@@ -156,14 +163,16 @@ the dashboard's **SQL Editor**. Details: [Module 13](docs/course/13-saving-trips
 ## Testing
 
 ```bash
-npm test          # unit tests (budget math, signatures, request size limits)
+npm test          # unit tests (budget math, signatures, request size limits, formatting)
 npm run lint
 npx tsc --noEmit  # type check
 npm run build     # production build
 ```
 
 Manual and failure-case testing (broken keys, rate limits, tampered saves,
-phone layout) is described in [Module 14](docs/course/14-hardening.md).
+phone layout) is described in [Module 14](docs/course/14-hardening.md);
+the accessibility audit and keyboard checks in
+[Module 20](docs/course/20-final-pass.md).
 
 ## Deployment
 

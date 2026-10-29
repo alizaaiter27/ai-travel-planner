@@ -48,7 +48,8 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 16 | [Design foundation](16-design-foundation.md) | Travel palette, fonts, header & footer | Design tokens, Tailwind `@theme`, WCAG contrast, `next/font`, touch targets | `2876a0d` |
 | 17 | [Landing page](17-landing-page.md) | Hero, example trip, how it works | Landing patterns, one primary action, CSS gradients, reduced motion, accessible tables | `3011d47` |
 | 18 | [Form & loading](18-form-and-loading.md) | Card form, icon chips, step-by-step loading | Hints with `aria-describedby`, honest progress, interest limit, reduced motion | `d9622e3` |
-| 19 | [Itinerary UI](19-itinerary-ui.md) | Timeline stops, icons, 44 px targets | Label in name, heading levels, contrast of data colours, pure helpers + tests | — |
+| 19 | [Itinerary UI](19-itinerary-ui.md) | Timeline stops, icons, 44 px targets | Label in name, heading levels, contrast of data colours, pure helpers + tests | `8cd936f` |
+| 20 | [Final pass](20-final-pass.md) | Audit fixes, new screenshots | axe-core audits, cascade layers, keyboard checks, reduced motion, false alarms | — |
 
 The live app: <https://ai-travel-planner-beta-six.vercel.app>
 
