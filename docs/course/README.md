@@ -41,12 +41,12 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 09 | [AI itinerary with OpenAI](09-ai-itinerary.md) | `POST /api/itinerary` | Structured outputs, dynamic enums, prompt injection, AI failure modes, token costs | `3484785` |
 | 10 | [The AI plan in the UI](10-ai-plan-ui.md) | Real plan on the page | Replacing a data source, `.refine()`, honest loading, effect cleanup, `<details>` | `ac1ad0b` |
 | 11 | [Budget calculations](11-budget.md) | Budget card + daily subtotals | Pure functions, floating-point money, unit tests with Vitest, `role="meter"` | `277be1f` |
+| 12 | [Interactive map](12-map.md) | Map with day-colored markers linked to the list | Public vs. secret keys, `useMap`, shared selection state, effect dependencies, sticky layout | `2256e42` |
 
 ### Coming next
 
 | # | Module | What you'll build |
 |---|--------|-------------------|
-| 12 | Interactive map | Google Maps with markers linked to the itinerary |
 | 13 | Saving trips | Supabase database, save and reopen trips |
 | 14 | Testing & hardening | Failure cases, security checks, mobile |
 | 15 | Polish & deploy | README, screenshots, deploy to Vercel |
@@ -64,8 +64,9 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | Google Places API (New) | — | Real attractions and restaurants |
 | OpenAI SDK (`openai`) | 7.45 | Itinerary generation with structured outputs (`gpt-6.1-terra`) |
 | Vitest | 5.0 | Unit tests (`npm test`) |
+| `@vis.gl/react-google-maps` | 1.10 | Google Maps JavaScript API in React |
 
-Later modules add Google Maps JavaScript API and Supabase.
+Later modules add Supabase.
 
 ## A note on secrets
 
