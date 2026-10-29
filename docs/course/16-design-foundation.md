@@ -1,6 +1,6 @@
 # Module 16 — Design foundation: tokens, fonts, header & footer
 
-**Commit:** the commit adding this module · **Time:** ~60 minutes
+**Commit:** `2876a0d` · **Time:** ~60 minutes
 
 ## Goal
 

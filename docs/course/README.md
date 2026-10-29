@@ -45,7 +45,8 @@ Next.js, TypeScript, or APIs yet — each module explains the concepts it uses.
 | 13 | [Saving trips](13-saving-trips.md) | Supabase storage, private share links | RLS, HMAC signatures, random IDs, Suspense + `notFound`, `useSyncExternalStore` | `f2115d5` |
 | 14 | [Testing & hardening](14-hardening.md) | Rate limits, size limits, headers | Shared counters, race conditions, fail open vs. closed, bundle scanning, dev vs. prod errors | `0ae40d2` |
 | 15 | [README & deploy](15-deploy.md) | Live app on Vercel | README structure, `maxDuration`, env vars in production, reading logs, `gm_authFailure` | `471ec5a` |
-| 16 | [Design foundation](16-design-foundation.md) | Travel palette, fonts, header & footer | Design tokens, Tailwind `@theme`, WCAG contrast, `next/font`, touch targets | — |
+| 16 | [Design foundation](16-design-foundation.md) | Travel palette, fonts, header & footer | Design tokens, Tailwind `@theme`, WCAG contrast, `next/font`, touch targets | `2876a0d` |
+| 17 | [Landing page](17-landing-page.md) | Hero, example trip, how it works | Landing patterns, one primary action, CSS gradients, reduced motion, accessible tables | — |
 
 The live app: <https://ai-travel-planner-beta-six.vercel.app>
 

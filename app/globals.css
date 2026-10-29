@@ -76,3 +76,40 @@ h1,
 h2 {
   font-family: var(--font-display), Georgia, serif;
 }
+
+/*
+  Hero background: soft "aurora" glows of the brand colours over the page
+  colour. Kept low-contrast so text on top stays readable, and it drifts
+  slowly (20 s) — unless the visitor asked for less motion.
+*/
+.aurora {
+  background-color: var(--canvas);
+}
+
+.aurora::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(40% 50% at 15% 20%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 70%),
+    radial-gradient(35% 45% at 85% 15%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(45% 50% at 70% 85%, color-mix(in srgb, #14b8a6 22%, transparent), transparent 70%);
+  filter: blur(40px);
+  animation: aurora-drift 20s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora::before {
+    animation: none;
+  }
+}
