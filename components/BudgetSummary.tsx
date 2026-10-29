@@ -1,3 +1,4 @@
+import { WalletIcon } from "@/components/icons";
 import { formatMoney } from "@/lib/format";
 import type { BudgetSummary as Summary } from "@/lib/itinerary/budget";
 
@@ -14,26 +15,27 @@ export default function BudgetSummary({ summary, currency }: Props) {
   return (
     <section
       aria-labelledby="budget-heading"
-      className="rounded-xl border border-line bg-surface p-4 sm:p-5"
+      className="rounded-2xl border border-line bg-surface p-4 sm:p-6"
     >
-      <h3 id="budget-heading" className="font-semibold">
+      <h3 id="budget-heading" className="flex items-center gap-2 font-semibold">
+        <WalletIcon className="h-5 w-5 text-primary" />
         Budget estimate
       </h3>
 
-      <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
+      <dl className="mt-4 grid grid-cols-3 gap-3 text-sm">
         <div>
           <dt className="text-ink-muted">Your budget</dt>
-          <dd className="font-medium">{formatMoney(summary.budget, currency)}</dd>
+          <dd className="mt-0.5 text-lg font-semibold">{formatMoney(summary.budget, currency)}</dd>
         </div>
         <div>
           <dt className="text-ink-muted">Plan estimate</dt>
-          <dd className="font-medium">~{formatMoney(summary.estimatedTotal, currency)}</dd>
+          <dd className="mt-0.5 text-lg font-semibold">~{formatMoney(summary.estimatedTotal, currency)}</dd>
         </div>
         <div>
           <dt className="text-ink-muted">{over ? "Over by" : "Left over"}</dt>
           <dd
             className={
-              "font-medium " +
+              "mt-0.5 text-lg font-semibold " +
               (over ? "text-red-700 dark:text-red-400" : "text-emerald-700 dark:text-emerald-400")
             }
           >
@@ -49,7 +51,7 @@ export default function BudgetSummary({ summary, currency }: Props) {
         aria-valuemax={100}
         aria-valuenow={barWidth}
         aria-valuetext={`${summary.usedPercent}% of your budget`}
-        className="mt-3 h-2 overflow-hidden rounded-full bg-surface-muted"
+        className="mt-4 h-2.5 overflow-hidden rounded-full bg-surface-muted"
       >
         <div
           className={"h-full rounded-full " + (over ? "bg-red-600" : "bg-emerald-600")}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
+import { ArrowLeftIcon, BookmarkIcon } from "@/components/icons";
 import ItineraryView from "@/components/ItineraryView";
 import PlaceCandidates from "@/components/PlaceCandidates";
 import { getTrip } from "@/lib/trips/store";
@@ -24,12 +25,12 @@ export async function generateMetadata({ params }: PageProps<"/trips/[id]">): Pr
 export default function TripPage({ params }: PageProps<"/trips/[id]">) {
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12 sm:px-6 sm:py-16">
-      {/* py-2 gives the link a comfortable tap height on phones. */}
       <Link
         href="/"
-        className="inline-block py-2 text-sm text-primary underline-offset-2 hover:underline"
+        className="-ml-1 inline-flex min-h-11 items-center gap-2 rounded-lg px-1 text-sm font-medium text-primary underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
-        ← Plan a new trip
+        <ArrowLeftIcon className="h-4 w-4" />
+        Plan a new trip
       </Link>
       <div className="mt-6">
         <Suspense fallback={<p className="text-sm text-ink-muted">Loading trip…</p>}>
@@ -49,9 +50,17 @@ async function SavedTrip({ id }: { id: string }) {
   const saved = new Date(trip.createdAt).toLocaleDateString("en", { dateStyle: "medium" });
 
   return (
-    <div className="space-y-8">
-      <p className="text-sm text-ink-muted">Saved trip · {saved}</p>
-      <ItineraryView itinerary={trip.plan.itinerary} places={trip.plan.places} budget={trip.request.budget} />
+    <div className="space-y-6">
+      <p className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-1 text-xs font-medium text-primary">
+        <BookmarkIcon className="h-3.5 w-3.5" />
+        Saved trip · {saved}
+      </p>
+      <ItineraryView
+        titleAs="h1"
+        itinerary={trip.plan.itinerary}
+        places={trip.plan.places}
+        budget={trip.request.budget}
+      />
       <PlaceCandidates destinationName={trip.plan.destinationName} places={trip.plan.places} />
     </div>
   );

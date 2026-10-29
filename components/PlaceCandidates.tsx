@@ -1,3 +1,5 @@
+import { ChevronRightIcon, ExternalLinkIcon } from "@/components/icons";
+import { shortAddress } from "@/lib/format";
 import type { Place, PlaceCategory } from "@/types/trip";
 
 type Props = {
@@ -14,12 +16,10 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
   return (
     // <details> is a built-in show/hide control: keyboard and screen-reader
     // friendly with no JavaScript.
-    <details className="group rounded-xl border border-line bg-surface p-4">
-      <summary className="cursor-pointer list-none">
-        <h2 className="inline text-lg font-semibold">
-          <span aria-hidden="true" className="mr-2 inline-block transition-transform group-open:rotate-90">
-            ›
-          </span>
+    <details className="group rounded-2xl border border-line bg-surface p-4 sm:p-6">
+      <summary className="cursor-pointer list-none rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+        <h2 className="flex items-center gap-2 text-xl font-semibold">
+          <ChevronRightIcon className="h-5 w-5 shrink-0 text-primary transition-transform group-open:rotate-90" />
           All {places.length} real places we considered
         </h2>
         <p className="mt-1 text-sm text-ink-muted">
@@ -35,7 +35,7 @@ export default function PlaceCandidates({ destinationName, places }: Props) {
             <section
               key={category}
               aria-labelledby={`places-${category}`}
-              className="rounded-xl border border-line bg-surface p-4"
+              className="rounded-xl border border-line bg-canvas p-4"
             >
               <h3 id={`places-${category}`} className="font-semibold">
                 {title} <span className="font-normal text-ink-muted">({inSection.length})</span>
@@ -66,15 +66,17 @@ function PlaceRow({ place }: { place: Place }) {
           <span className="text-xs text-ink-muted">{formatType(place.primaryType)}</span>
         )}
       </div>
-      <p className="text-xs text-ink-muted">{place.address}</p>
+      <p className="text-xs text-ink-muted">{shortAddress(place.address)}</p>
       {place.googleMapsUri && (
         <a
           href={place.googleMapsUri}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-primary underline-offset-2 hover:underline"
+          className="inline-flex min-h-8 items-center gap-1 text-xs font-medium text-primary underline-offset-2 hover:underline"
         >
-          View on Google Maps<span className="sr-only"> (opens in a new tab)</span>
+          Google Maps
+          <ExternalLinkIcon className="h-3.5 w-3.5" />
+          <span className="sr-only"> for {place.name} (opens in a new tab)</span>
         </a>
       )}
     </li>

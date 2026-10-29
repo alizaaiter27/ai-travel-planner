@@ -1,6 +1,6 @@
 # Module 18 — A friendlier form and honest loading
 
-**Commit:** the commit adding this module · **Time:** ~60 minutes
+**Commit:** `d9622e3` · **Time:** ~60 minutes
 
 ## Goal
 

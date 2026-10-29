@@ -21,3 +21,10 @@ export function formatDuration(minutes: number): string {
   if (hours === 0) return `${rest} min`;
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 }
+
+// Google addresses are long ("Carrer de Montcada, 15-23, Ciutat Vella,
+// 08003 Barcelona, Spain"). In a list the street is enough — the city is
+// already known, and the Google Maps link has the full address.
+export function shortAddress(address: string): string {
+  return address.split(", ").slice(0, 2).join(", ");
+}
