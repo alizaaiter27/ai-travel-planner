@@ -5,6 +5,7 @@ import ItineraryView from "@/components/ItineraryView";
 import PlaceCandidates from "@/components/PlaceCandidates";
 import SaveTripPanel from "@/components/SaveTripPanel";
 import TripForm from "@/components/TripForm";
+import { AlertCircleIcon, CheckIcon, SpinnerIcon } from "@/components/icons";
 import { fetchPlan, PlanRequestError, type Plan } from "@/lib/api/plan-client";
 import type { TripRequest } from "@/types/trip";
 
@@ -76,7 +77,7 @@ export default function TripPlanner() {
           ref={outcomeRef}
           tabIndex={-1}
           aria-label="Error"
-          className="max-w-3xl focus:outline-none"
+          className="max-w-3xl scroll-mt-6 focus:outline-none"
         >
           <ErrorState error={error} onRetry={handleRetry} />
         </section>
@@ -105,6 +106,16 @@ export default function TripPlanner() {
   );
 }
 
+// What the server does, in order, with roughly when each step starts.
+// The server doesn't report progress, so the active step is a time-based
+// estimate; the last step is never shown as finished — the plan appearing
+// is the real "done".
+const LOADING_STEPS = [
+  { label: "Finding real places", startsAt: 0 },
+  { label: "Arranging your days with AI", startsAt: 6 },
+  { label: "Checking the plan and adding up costs", startsAt: 30 },
+];
+
 function LoadingState() {
   // Counts seconds while waiting: a plan takes 15–45 s, and a visible
   // counter shows the page is still working rather than frozen.
@@ -114,22 +125,54 @@ function LoadingState() {
     return () => clearInterval(timer); // stop counting when loading ends
   }, []);
 
+  const activeIndex = LOADING_STEPS.findLastIndex((step) => seconds >= step.startsAt);
+
   return (
-    <div className="space-y-4">
-      <div className="text-sm text-ink-muted">
+    <div className="rounded-2xl border border-line bg-surface p-5 sm:p-8">
+      <div className="flex items-baseline justify-between gap-4">
         {/* Only this static line is announced, not every tick of the counter. */}
-        <p role="status">
-          Finding real places and building your plan. This usually takes 15–45 seconds.
+        <p role="status" className="font-medium">
+          Planning your trip…
         </p>
-        <p aria-hidden="true" className="mt-1 font-mono text-xs text-ink-muted">
+        <p aria-hidden="true" className="font-mono text-sm text-ink-muted">
           {seconds}s
         </p>
       </div>
-      {/* Grey placeholder blocks shaped like the result ("skeleton" loading). */}
-      <div className="animate-pulse space-y-4" aria-hidden="true">
-        <div className="h-7 w-2/3 rounded bg-surface-muted" />
-        <div className="h-40 rounded-xl bg-surface-muted" />
-        <div className="h-40 rounded-xl bg-surface-muted" />
+      <ol className="mt-5 space-y-3" aria-hidden="true">
+        {LOADING_STEPS.map((step, index) => {
+          const state = index < activeIndex ? "done" : index === activeIndex ? "active" : "waiting";
+          return (
+            <li key={step.label} className="flex items-center gap-3 text-sm">
+              <span
+                className={
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full " +
+                  (state === "done"
+                    ? "bg-primary text-on-primary"
+                    : state === "active"
+                      ? "bg-primary-soft text-primary"
+                      : "border border-line text-ink-muted")
+                }
+              >
+                {state === "done" ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : state === "active" ? (
+                  <SpinnerIcon className="h-4 w-4" />
+                ) : (
+                  <span className="text-xs">{index + 1}</span>
+                )}
+              </span>
+              <span className={state === "waiting" ? "text-ink-muted" : "font-medium"}>
+                {step.label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+      {/* Placeholder blocks shaped like the result ("skeleton" loading). */}
+      <div className="mt-8 space-y-4 motion-safe:animate-pulse" aria-hidden="true">
+        <div className="h-6 w-2/3 rounded bg-surface-muted" />
+        <div className="h-28 rounded-xl bg-surface-muted" />
+        <div className="h-28 rounded-xl bg-surface-muted" />
       </div>
     </div>
   );
@@ -139,19 +182,22 @@ function ErrorState({ error, onRetry }: { error: PlanError; onRetry: () => void 
   return (
     <div
       role="alert"
-      className="rounded-lg border border-red-300 bg-red-50 p-4 text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+      className="flex gap-3 rounded-2xl border border-red-300 bg-red-50 p-5 text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
     >
-      <p className="font-medium">We couldn&apos;t plan this trip</p>
-      <p className="mt-1 text-sm">{error.message}</p>
-      {error.canRetry && (
-        <button
-          type="button"
-          onClick={onRetry}
-          className="mt-3 rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 dark:border-red-800 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800"
-        >
-          Try again
-        </button>
-      )}
+      <AlertCircleIcon className="mt-0.5 h-5 w-5 shrink-0" />
+      <div>
+        <p className="font-medium">We couldn&apos;t plan this trip</p>
+        <p className="mt-1 text-sm">{error.message}</p>
+        {error.canRetry && (
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-4 min-h-11 rounded-lg border border-red-300 bg-white px-4 text-sm font-medium text-red-900 hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 dark:border-red-800 dark:bg-red-900 dark:text-red-100 dark:hover:bg-red-800"
+          >
+            Try again
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # Module 17 — The landing page
 
-**Commit:** the commit adding this module · **Time:** ~60 minutes
+**Commit:** `3011d47` · **Time:** ~60 minutes
 
 ## Goal
 

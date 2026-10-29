@@ -10,6 +10,20 @@ import {
   MAX_PREFERENCES_LENGTH,
   MIN_DAYS,
 } from "@/lib/trip-options";
+import {
+  AlertCircleIcon,
+  CheckIcon,
+  LandmarkIcon,
+  MapPinIcon,
+  MoonIcon,
+  MountainIcon,
+  PaletteIcon,
+  ShoppingBagIcon,
+  SpinnerIcon,
+  SunIcon,
+  UsersIcon,
+  UtensilsIcon,
+} from "@/components/icons";
 import type { Currency, Interest, TripRequest } from "@/types/trip";
 
 // What the user has typed so far. Number fields are kept as strings
@@ -46,9 +60,28 @@ function toFormErrors(error: z.ZodError<TripRequest>): FormErrors {
 }
 
 const inputClass =
-  "mt-1 block w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-base text-ink " +
-  "focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 " +
-  "aria-[invalid=true]:border-red-600";
+  "mt-1.5 block min-h-11 rounded-lg border border-line-strong bg-surface px-3 py-2 text-base text-ink " +
+  "placeholder:text-ink-muted/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 " +
+  "aria-[invalid=true]:border-red-600 dark:aria-[invalid=true]:border-red-400";
+
+const labelClass = "block text-sm font-medium";
+const hintClass = "mt-1 text-xs text-ink-muted";
+
+// Google Places is searched for the first few interests only (see
+// MAX_INTEREST_QUERIES in lib/google-maps/places.ts), so the form says so
+// and stops more being picked, instead of silently ignoring them.
+const MAX_INTERESTS = 3;
+
+const INTEREST_ICONS: Record<Interest, (props: { className?: string }) => React.ReactNode> = {
+  "Culture & history": LandmarkIcon,
+  "Food & drink": UtensilsIcon,
+  "Nature & outdoors": MountainIcon,
+  "Art & museums": PaletteIcon,
+  Nightlife: MoonIcon,
+  Shopping: ShoppingBagIcon,
+  "Family-friendly": UsersIcon,
+  Relaxation: SunIcon,
+};
 
 type Props = {
   onSubmit: (request: TripRequest) => void;
@@ -95,31 +128,40 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
     onSubmit(result.data);
   }
 
+  const interestsFull = values.interests.length >= MAX_INTERESTS;
+
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="space-y-6 rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-8"
+    >
       <div>
-        <label htmlFor="destination" className="block text-sm font-medium">
-          Destination
+        <label htmlFor="destination" className={labelClass}>
+          Where are you going?
         </label>
-        <input
-          id="destination"
-          type="text"
-          placeholder="e.g. Lisbon, Portugal"
-          autoComplete="off"
-          value={values.destination}
-          onChange={(e) => updateField("destination", e.target.value)}
-          aria-invalid={Boolean(errors.destination)}
-          aria-describedby={
-            errors.destination ? "destination-error" : undefined
-          }
-          className={inputClass}
-        />
+        <div className="relative">
+          <MapPinIcon className="pointer-events-none absolute top-1/2 left-3 mt-[3px] h-5 w-5 -translate-y-1/2 text-ink-muted" />
+          <input
+            id="destination"
+            type="text"
+            placeholder="e.g. Lisbon, Portugal"
+            autoComplete="off"
+            value={values.destination}
+            onChange={(e) => updateField("destination", e.target.value)}
+            aria-invalid={Boolean(errors.destination)}
+            aria-describedby={
+              errors.destination ? "destination-error" : undefined
+            }
+            className={`${inputClass} w-full pl-10`}
+          />
+        </div>
         <FieldError id="destination-error" message={errors.destination} />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
         <div>
-          <label htmlFor="days" className="block text-sm font-medium">
+          <label htmlFor="days" className={labelClass}>
             Number of days
           </label>
           <input
@@ -131,69 +173,85 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
             value={values.days}
             onChange={(e) => updateField("days", e.target.value)}
             aria-invalid={Boolean(errors.days)}
-            aria-describedby={errors.days ? "days-error" : undefined}
-            className={inputClass}
+            aria-describedby={errors.days ? "days-error days-hint" : "days-hint"}
+            className={`${inputClass} w-full`}
           />
+          <p id="days-hint" className={hintClass}>
+            {MIN_DAYS}–{MAX_DAYS} days
+          </p>
           <FieldError id="days-error" message={errors.days} />
         </div>
 
         <div>
-          <label htmlFor="budget" className="block text-sm font-medium">
+          <label htmlFor="budget" className={labelClass}>
             Total budget
           </label>
-          <input
-            id="budget"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            placeholder="e.g. 1200"
-            value={values.budget}
-            onChange={(e) => updateField("budget", e.target.value)}
-            aria-invalid={Boolean(errors.budget)}
-            aria-describedby={errors.budget ? "budget-error" : undefined}
-            className={inputClass}
-          />
+          <div className="flex gap-2">
+            <input
+              id="budget"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              placeholder="e.g. 1200"
+              value={values.budget}
+              onChange={(e) => updateField("budget", e.target.value)}
+              aria-invalid={Boolean(errors.budget)}
+              aria-describedby={
+                errors.budget ? "budget-error budget-hint" : "budget-hint"
+              }
+              className={`${inputClass} min-w-0 flex-1`}
+            />
+            <label htmlFor="currency" className="sr-only">
+              Currency
+            </label>
+            <select
+              id="currency"
+              value={values.currency}
+              // The options come from CURRENCIES, so the value is always a Currency.
+              onChange={(e) =>
+                updateField("currency", e.target.value as Currency)
+              }
+              className={`${inputClass} w-auto shrink-0`}
+            >
+              {CURRENCIES.map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p id="budget-hint" className={hintClass}>
+            For activities and meals. Hotels and travel aren&apos;t included.
+          </p>
           <FieldError id="budget-error" message={errors.budget} />
-        </div>
-
-        <div>
-          <label htmlFor="currency" className="block text-sm font-medium">
-            Currency
-          </label>
-          <select
-            id="currency"
-            value={values.currency}
-            // The options come from CURRENCIES, so the value is always a Currency.
-            onChange={(e) =>
-              updateField("currency", e.target.value as Currency)
-            }
-            className={inputClass}
-          >
-            {CURRENCIES.map((code) => (
-              <option key={code} value={code}>
-                {code}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
       <fieldset
-        aria-describedby={errors.interests ? "interests-error" : undefined}
+        aria-describedby={
+          errors.interests ? "interests-error interests-hint" : "interests-hint"
+        }
       >
-        <legend className="text-sm font-medium">Interests</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <legend className={labelClass}>What do you enjoy?</legend>
+        <p id="interests-hint" className={hintClass}>
+          Pick up to {MAX_INTERESTS} ({values.interests.length} chosen).
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
           {INTERESTS.map((interest, index) => {
             const checked = values.interests.includes(interest);
+            const disabled = !checked && interestsFull;
+            const InterestIcon = INTEREST_ICONS[interest];
             return (
               <label
                 key={interest}
                 className={
-                  "cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors " +
+                  "flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm transition-colors " +
                   "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/40 " +
                   (checked
-                    ? "border-primary bg-primary text-on-primary"
-                    : "border-line-strong hover:border-primary")
+                    ? "cursor-pointer border-primary bg-primary text-on-primary"
+                    : disabled
+                      ? "cursor-not-allowed border-line text-ink-muted opacity-60"
+                      : "cursor-pointer border-line-strong hover:border-primary hover:bg-primary-soft")
                 }
               >
                 <input
@@ -202,8 +260,14 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
                   type="checkbox"
                   className="sr-only"
                   checked={checked}
+                  disabled={disabled}
                   onChange={() => toggleInterest(interest)}
                 />
+                {checked ? (
+                  <CheckIcon className="h-4 w-4" />
+                ) : (
+                  <InterestIcon className="h-4 w-4" />
+                )}
                 {interest}
               </label>
             );
@@ -213,8 +277,8 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
       </fieldset>
 
       <div>
-        <label htmlFor="preferences" className="block text-sm font-medium">
-          Other preferences{" "}
+        <label htmlFor="preferences" className={labelClass}>
+          Anything else?{" "}
           <span className="font-normal text-ink-muted">(optional)</span>
         </label>
         <textarea
@@ -227,7 +291,7 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
           aria-describedby={
             errors.preferences ? "preferences-error" : undefined
           }
-          className={inputClass}
+          className={`${inputClass} w-full`}
         />
         <p className="mt-1 text-right text-xs text-ink-muted">
           {values.preferences.length}/{MAX_PREFERENCES_LENGTH}
@@ -235,13 +299,17 @@ export default function TripForm({ onSubmit, isLoading }: Props) {
         <FieldError id="preferences-error" message={errors.preferences} />
       </div>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full rounded-lg bg-accent px-5 py-3 font-medium text-on-accent transition-colors hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-      >
-        {isLoading ? "Planning…" : "Plan my trip"}
-      </button>
+      <div className="flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center">
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-accent px-6 font-medium text-on-accent transition-colors hover:bg-accent-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+        >
+          {isLoading && <SpinnerIcon className="h-4 w-4" />}
+          {isLoading ? "Planning your trip…" : "Plan my trip"}
+        </button>
+        <p className="text-sm text-ink-muted">Usually takes 15–45 seconds.</p>
+      </div>
     </form>
   );
 }
@@ -252,8 +320,9 @@ function FieldError({ id, message }: { id: string; message?: string }) {
     <p
       id={id}
       role="alert"
-      className="mt-1 text-sm text-red-600 dark:text-red-400"
+      className="mt-1.5 flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400"
     >
+      <AlertCircleIcon className="h-4 w-4 shrink-0" />
       {message}
     </p>
   );
